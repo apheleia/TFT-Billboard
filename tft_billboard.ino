@@ -2,6 +2,12 @@
 #include <SWTFT.h> // Hardware-specific library
 #include <SD.h>
 
+// Assign human-readable names to some common 16-bit color values:
+#define	BLACK   0x0000
+#define	BLUE    0x001F
+#define	RED     0xF800
+#define	GREEN   0x07E0
+
 #define SD_CS 10     
 
 // In the SD card, place 24 bit color BMP files (be sure they are 24-bit!)
@@ -23,16 +29,24 @@ void setup()
     return;
   }
 
-  bmpDraw("profile.bmp");
+  tft.fillScreen(BLACK);
+  tft.fillScreen(RED);
+  tft.fillScreen(GREEN);
+  tft.fillScreen(BLUE);
+  tft.fillScreen(BLACK);
+  delay(500);
+  bmpDraw("loading.bmp");
   delay(10000);
 }
 
 void loop()
 {
-  bmpDraw("grass.bmp");
-  delay(1000);
-  bmpDraw("profile.bmp");
-  delay(1000);
+  bmpDraw("fsfe.bmp");
+  delay(3000);
+  bmpDraw("nocloud.bmp");
+  delay(3000);
+  bmpDraw("theydont.bmp");
+  delay(3000);
 }
 
 // This function opens a Windows Bitmap (BMP) file and
@@ -87,23 +101,28 @@ void bmpDraw(char *filename) {
         // BMP rows are padded (if needed) to 4-byte boundary
         rowSize = (bmpWidth * 3 + 3) & ~3;
 
-        // Crop area to be loaded
         w = bmpWidth;
         h = bmpHeight;
+
+        // Crop area to be loaded
+        Serial.print(F("Width:"));
+        Serial.println(tft.width());
+        Serial.print(F("Height:"));
+        Serial.println(tft.height());    
         if((w-1) >= tft.width())  w = tft.width();
         if((h-1) >= tft.height()) h = tft.height();
 
         // Set TFT address window to clipped image bounds
         tft.setAddrWindow(0, 0, w-1, h-1);
 
-        for (row=0; row<h; row++) { // For each scanline...
+        for (row=0; row<h; row++) {  // For each scanline...
           // Seek to start of scan line.  It might seem labor-
           // intensive to be doing this on every line, but this
           // method covers a lot of gritty details like cropping
           // and scanline padding.  Also, the seek only takes
           // place if the file position actually needs to change
           // (avoids a lot of cluster math in SD library).
-            pos = bmpImageoffset + (bmpHeight - 1 - row) * rowSize; // Bitmap is stored bottom-to-top order (normal BMP)     
+          pos = bmpImageoffset + (bmpHeight - 1 - row) * rowSize; // Bitmap is stored bottom-to-top order (normal BMP)     
           // pos = bmpImageoffset + row * rowSize; // Bitmap is stored top-to-bottom
           if(bmpFile.position() != pos) { // Need seek?
             bmpFile.seek(pos);
@@ -161,5 +180,8 @@ uint32_t read32(File f) {
   ((uint8_t *)&result)[3] = f.read(); // MSB
   return result;
 }
+
+
+
 
 

@@ -2,6 +2,12 @@
 #include <SWTFT.h> // Hardware-specific library
 #include <SD.h>
 
+// SETUP
+// DELAY defines the delay in between consecutive images in milliseconds.
+#define DELAY 3000
+// IMAGE_COUNT defines the number of image files on the micro SD card.
+#define IMAGE_COUNT 4
+
 // Assign human-readable names to some common 16-bit color values:
 #define	BLACK   0x0000
 #define	BLUE    0x001F
@@ -34,19 +40,17 @@ void setup()
   tft.fillScreen(GREEN);
   tft.fillScreen(BLUE);
   tft.fillScreen(BLACK);
-  delay(500);
-  bmpDraw("loading.bmp");
-  delay(10000);
+  delay(1000);
 }
 
 void loop()
 {
-  bmpDraw("fsfe.bmp");
-  delay(3000);
-  bmpDraw("nocloud.bmp");
-  delay(3000);
-  bmpDraw("theydont.bmp");
-  delay(3000);
+  char filename[6];
+  for (int i=1; i<=IMAGE_COUNT; i++) {
+    sprintf(filename, "%02d.bmp", i);
+    bmpDraw(filename);
+    delay(DELAY);
+  }
 }
 
 // This function opens a Windows Bitmap (BMP) file and

@@ -2,6 +2,8 @@
 A patch to use with a 2.4” TFT screen and an arduino microcontroller to
 display digital adverts, like on a digital billboard.
 
+For a complete tutorial, see my blog post at http://apheleia.me/how-to-create-a-miniature-billboard/
+
 ## Setup
 Two constants are set at the top of the patch for setting up your project.
 ```C
